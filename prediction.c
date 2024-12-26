@@ -36,13 +36,18 @@ float get_predicted_sugar(Meal* m) {
 
 float get_avg_percent_error() {
     float retval = 0;
+    int meal_count = get_meal_count();
+    Meal* meal;
+    float after_sugar;
     for(int i = 0; i < meal_count; i++) {
-        float after_sugar = meals[i].after_sugar;
-        retval += fabsf((get_predicted_sugar(&meals[i]) - after_sugar) / after_sugar) * 100;
+        meal = get_meal(i);
+        after_sugar = meal->after_sugar;
+        retval += fabsf((get_predicted_sugar(meal) - after_sugar) / after_sugar) * 100;
     }
     return retval / meal_count;
 }
 
+#define PRINT_AFTER_RUNS 1000000
 
 void gradient_descent(int iterations) {
     // Iterate for a fixed number of steps
@@ -54,8 +59,9 @@ void gradient_descent(int iterations) {
         double grad_E_insulin = 0;    // Gradient of the error with respect to E_insulin
 
         // Loop over all meals to calculate the gradients
+        int meal_count = get_meal_count();
         for (int i = 0; i < meal_count; i++) {
-            Meal* m = &meals[i];                          // Get the current meal
+            Meal* m = get_meal(i);                          // Get the current meal
             float predicted = get_predicted_sugar(m);     // Predicted sugar level
             float actual = m->after_sugar;               // Actual sugar level
             float error = predicted - actual;            // Error (difference between predicted and actual)
@@ -80,7 +86,9 @@ void gradient_descent(int iterations) {
         E_insulin -= learning_rate * grad_E_insulin;    // Update E_insulin
 
         // Print progress for debugging and monitoring
-        printf("Iteration %d: Error = %.4f, E_carbs = %.4f, E_dextrose = %.4f, E_protein = %.4f, E_insulin = %.4f\n",
-               iter + 1, get_avg_percent_error(), E_carbs, E_dextrose, E_protein, E_insulin);
+        if(iter % PRINT_AFTER_RUNS == 0) {
+            printf("Iteration %d: Error = %.4f, E_carbs = %.4f, E_protein = %.4f, E_insulin = %.4f, E_dextrose = %.4f\n",
+                iter + 1, get_avg_percent_error(), E_carbs, E_protein, E_insulin, E_dextrose);
+        }
     }
 }

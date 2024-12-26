@@ -9,8 +9,7 @@ typedef struct {
 
 #define MEALSIZE sizeof(Meal)
 
-int meal_count;
-Meal* meals;
-
 void enter_meal(float carbs, float protein, float insulin, float dextrose, float before_sugar, float after_sugar);
 void init_meal_array();
+int get_meal_count();
+Meal* get_meal(int index);

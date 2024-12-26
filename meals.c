@@ -1,7 +1,12 @@
 #include "meals.h"
 #include <stdlib.h>
 
+Meal* meals;
 int meal_count = 0;
+
+void init_meal_array() {
+    meals = malloc(MEALSIZE);
+}
 
 void enter_meal(float carbs, float protein, float insulin, float dextrose, float before_sugar, float after_sugar) {
     Meal m;
@@ -17,6 +22,10 @@ void enter_meal(float carbs, float protein, float insulin, float dextrose, float
     meals[meal_count++] = m;
 }
 
-void init_meal_array() {
-    meals = malloc(MEALSIZE);
+Meal* get_meal(int index) {
+    return &meals[index];
+}
+
+int get_meal_count() {
+    return meal_count;
 }
